@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
   <meta charset="utf-8">
   <title>LovahLovah_U3D</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <meta name="viewport"
+        content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
 
   <style>
     html, body {
@@ -15,30 +20,48 @@
     }
 
     #unity-container {
-      position: fixed;
+      position: fixed !important;
       inset: 0;
+      width: 100%;
+      height: 100%;
     }
 
     #unity-canvas {
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
       display: block;
+    }
+
+    /* Ocultar elementos Unity que no queremos */
+    #unity-footer,
+    #unity-loading-bar,
+    #unity-logo,
+    #unity-logo-title-footer {
+      display: none !important;
     }
   </style>
 </head>
 
 <body>
-  <div id="unity-container">
-    <canvas id="unity-canvas"></canvas>
+  <div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="unity-loading-bar"></div>
+    <div id="unity-warning"></div>
+    <div id="unity-footer"></div>
   </div>
 
   <script>
-    const canvas = document.querySelector("#unity-canvas");
+    var canvas = document.querySelector("#unity-canvas");
 
-    const buildUrl = "Build";
-    const loaderUrl = buildUrl + "/LovahLovah_U3D.loader.js";
+    function unityShowBanner(msg, type) {
+      console.log(msg);
+    }
 
-    const config = {
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/LovahLovah_U3D.loader.js";
+
+    var config = {
+      arguments: [],
       dataUrl: buildUrl + "/LovahLovah_U3D.data",
       frameworkUrl: buildUrl + "/LovahLovah_U3D.framework.js",
       codeUrl: buildUrl + "/LovahLovah_U3D.wasm",
@@ -46,14 +69,18 @@
       companyName: "DefaultCompany",
       productName: "LovahLovah_U3D",
       productVersion: "0.1.0",
+      showBanner: unityShowBanner,
     };
 
-    const script = document.createElement("script");
+    // Siempre fullscreen
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+
+    var script = document.createElement("script");
     script.src = loaderUrl;
 
     script.onload = () => {
       createUnityInstance(canvas, config).catch((message) => {
-        console.error(message);
         alert(message);
       });
     };
